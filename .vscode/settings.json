@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["botlhale", "nextjs"]
+  "cSpell.words": ["botlhale", "nextjs"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
