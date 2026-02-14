@@ -30,8 +30,14 @@ const Navbar = () => {
   // Get the current path
   const pathname = usePathname();
   return (
-    <nav className="py-4">
-      <div className="container flex items-center justify-between">
+    <nav className="relative">
+      {/* Utility Bar */}
+      {/* <div className="hidden lg:block bg-primary text-white py-2">
+        <div className="container text-center font-bold text-[13px]">
+          Some message related to the app
+        </div>
+      </div> */}
+      <div className="container flex items-center justify-between py-4">
         {/* Logo */}
         <span>Logo</span>
 
