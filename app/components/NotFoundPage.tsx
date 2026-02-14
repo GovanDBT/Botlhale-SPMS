@@ -20,7 +20,7 @@ const NotFoundPage = () => {
         <h2 className="text-3xl font-bold text-primary">Page Not Found</h2>
       </div>
       {/* Description */}
-      <p className="text-[16px] max-w-5/10 text-center text-zinc-600 font-medium">
+      <p className="text-[16px] lg:max-w-5/10 text-center text-zinc-600 font-medium">
         The page or resource your looking for could not be found. Please use the
         buttons below to navigate back or return to home page.
       </p>
