@@ -57,7 +57,7 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: #576087;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: #f6b595;
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -130,5 +130,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  ::selection {
+    @apply bg-primary/80! text-white;
   }
 }
