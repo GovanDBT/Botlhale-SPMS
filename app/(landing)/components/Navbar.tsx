@@ -74,8 +74,8 @@ const Navbar = () => {
 
         {/* menu button - Desktop view only */}
         <Button
-          className="hidden lg:inline-flex"
-          onClick={() => router.push("/auth/signIn")}
+          className="button hidden lg:inline-flex"
+          onClick={() => router.push("/auth/login")}
         >
           Sign In
         </Button>
@@ -153,7 +153,10 @@ const Navbar = () => {
             {/* Menu Buttons */}
             <SheetFooter>
               {/* Sign in Button */}
-              <Button onClick={() => router.push("/auth/signIn")}>
+              <Button
+                className="button"
+                onClick={() => router.push("/auth/login")}
+              >
                 Sign In
               </Button>
             </SheetFooter>
