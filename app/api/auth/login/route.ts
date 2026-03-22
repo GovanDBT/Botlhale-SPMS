@@ -28,13 +28,14 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // Attempt login
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: userData, error: signInError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
     // if login fails
-    if (signInError) {
+    if (signInError || !userData) {
       return NextResponse.json(
         {
           success: false,
