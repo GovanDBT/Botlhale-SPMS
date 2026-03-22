@@ -11,9 +11,71 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import z from "zod";
+import { loginSchema } from "@/util/schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { Spinner } from "@/components/ui/spinner";
+import InputError from "@/app/components/InputError";
+
+// infer zod login schema
+type loginData = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
+  const [error, setError] = useState<string | null>(null); // when error message occurs
+  const [isRedirecting, setIsRedirecting] = useState(false); // when user is redirected
   const [showPassword, setShowPassword] = useState(false); // show or hide password
+  const router = useRouter(); // programmatic navigation
+
+  // initialize react forms with zod validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<loginData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  // handle submit login
+  const onSubmit = async (data: loginData) => {
+    try {
+      setError(null);
+      setIsRedirecting(true);
+
+      const res = await axios.post("/api/auth/login", data);
+
+      router.push(res.data.redirectPath);
+    } catch (err) {
+      setIsRedirecting(false);
+
+      // User is offline / no internet
+      if (!navigator.onLine) {
+        setError("You are offline. Please check your internet connection.");
+        return;
+      }
+
+      // Axios error (API responded)
+      if (axios.isAxiosError(err)) {
+        const message =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Invalid email or password";
+
+        setError(message);
+        return;
+      }
+
+      // Unknown error
+      setError("An unexpected error occurred. Please try again later.");
+    }
+  };
+
   return (
     <motion.div
       initial={{ x: "var(--x-from, 0)" }}
@@ -28,8 +90,9 @@ const LoginForm = () => {
           Welcome back <span className="text-primary">Student</span>
         </h2>
         <p>Enter your details below to sign in and access your dashboard.</p>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
-      <form className="my-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="my-6">
         <FieldSet>
           <FieldGroup>
             {/* Email */}
@@ -42,7 +105,9 @@ const LoginForm = () => {
                 id="email"
                 autoComplete="on"
                 className="input"
+                {...register("email")}
               />
+              <InputError error={errors.email} />
             </Field>
 
             {/* Password */}
@@ -55,6 +120,7 @@ const LoginForm = () => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   className="input"
+                  {...register("password")}
                 />
                 {/* Eye icon button */}
                 <button
@@ -70,6 +136,7 @@ const LoginForm = () => {
                   )}
                 </button>
               </div>
+              <InputError error={errors.password} />
             </Field>
 
             {/* Remember me + forgot password */}
@@ -91,7 +158,16 @@ const LoginForm = () => {
             </div>
 
             {/* Sign in button */}
-            <Button className="button">Sign In</Button>
+            <Button type="submit" className="button" disabled={isRedirecting}>
+              {isRedirecting ? (
+                <div className="flex items-center gap-2">
+                  <Spinner className="size-4" />
+                  Redirecting...
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </Button>
           </FieldGroup>
         </FieldSet>
       </form>
