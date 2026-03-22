@@ -16,6 +16,7 @@ const LandingLayout = ({ children }: Props) => {
       {/* Navbar */}
       <Navbar />
       <main className="flex-1">{children}</main>
+
       {/* Footer */}
     </div>
   );
