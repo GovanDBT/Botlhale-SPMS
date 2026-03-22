@@ -51,7 +51,6 @@ const LoginForm = () => {
       const res = await axios.post("/api/auth/login", data);
 
       router.push(res.data.redirectPath);
-      setIsRedirecting(false);
     } catch (err) {
       setIsRedirecting(false);
 
