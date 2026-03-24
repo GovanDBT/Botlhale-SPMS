@@ -13,7 +13,7 @@ const InputError = ({ error }: Props) => {
   if (!error) return null;
 
   return (
-    <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+    <p className="text-red-500 text-sm flex items-center gap-1">
       {" "}
       <CircleAlert size={14} /> {error.message}
     </p>
