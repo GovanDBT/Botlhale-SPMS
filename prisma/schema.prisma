@@ -13,18 +13,33 @@ datasource db {
   provider = "postgresql"
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+enum Role {
+  SUPERADMIN
+  ADMIN
+  SCHOOLADMIN
+  FACULTY
+  STUDENT
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Profile {
+  id            String    @id @db.Uuid
+  userId        String    @unique
+  firstname     String
+  lastname      String
+  email         String    @unique
+  phone         String    @unique
+  active        Boolean   @default(true)
+  role          Role      @default(STUDENT)
+  dateCreated   DateTime  @default(now())
+  createdBy     String?   @db.Uuid
+  createdByUser Profile?  @relation("CreatedByUser", fields: [createdBy], references: [id])
+  dateUpdated   DateTime? @updatedAt
+  updatedBy     String?   @db.Uuid
+  updatedByUser Profile?  @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+
+  // Self-referencing back-relations (required by Prisma)
+  createdUsers Profile[] @relation("CreatedByUser")
+  UpdatedUsers Profile[] @relation("UpdatedByUser")
+
+  @@map("profiles")
 }
