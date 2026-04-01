@@ -133,7 +133,7 @@
 }
 
 .button {
-  @apply text-[16px] lg:text-sm font-bold py-6 lg:py-4 px-6 rounded-full hover:bg-[#454c6c]!;
+  @apply text-[16px] lg:text-sm font-bold py-6 lg:py-4 px-6 rounded-full hover:bg-[#454c6c]! cursor-pointer!;
 }
 
 @layer base {

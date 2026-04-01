@@ -1,4 +1,4 @@
-import SignoutButton from "../components/SignoutButton";
+import SignoutButton from "./components/SignoutButton";
 
 const Dashboard = () => {
   return (

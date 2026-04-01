@@ -51,7 +51,7 @@ export async function GET() {
     // success response
     return NextResponse.json({
       success: true,
-      user: userProfile,
+      data: userProfile,
     });
   } catch (error) {
     return handleUnexpectedError(error);
