@@ -24,6 +24,11 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import SchoolSwitcher from "./SchoolSwitcher";
+import { NavWorkspace } from "./NavWorkspace";
+import { NavDiscover } from "./NavDiscover";
+import NavUtility from "./NavUtility";
+import { NavUser } from "./NavUser";
+import { useGetProfile } from "@/hooks/useGetMe";
 
 // This is sample data.
 const data = {
@@ -156,13 +161,29 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  // fetch current users profile
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    error: profileError,
+  } = useGetProfile();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SchoolSwitcher />
       </SidebarHeader>
-      <SidebarContent>content here...</SidebarContent>
-      <SidebarFooter>footer here...</SidebarFooter>
+      <SidebarContent>
+        <NavUtility />
+        <NavWorkspace items={data.navMain} />
+        <NavDiscover projects={data.projects} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser
+          user={profile}
+          isLoading={isLoadingProfile}
+          error={profileError}
+        />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
