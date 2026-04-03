@@ -1,11 +1,11 @@
 /**
- * @file hooks/useGetMe.ts
+ * @file hooks/useProfile.ts
  * @description custom hook for managing fetched user profile
  */
 
-import { Profile } from "@/generated/prisma/client";
 import { CACHE_KEY_PROFILE } from "@/util/cache";
 import { PROFILE_ENDPOINT } from "@/util/endpoints";
+import { Profile } from "@/util/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 

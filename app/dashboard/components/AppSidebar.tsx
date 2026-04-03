@@ -28,7 +28,9 @@ import { NavWorkspace } from "./NavWorkspace";
 import { NavDiscover } from "./NavDiscover";
 import NavUtility from "./NavUtility";
 import { NavUser } from "./NavUser";
-import { useGetProfile } from "@/hooks/useGetMe";
+import { useGetProfile } from "@/hooks/useProfile";
+import { usePermissions } from "@/hooks/usePermissions";
+import { Permission } from "@/generated/prisma/enums";
 
 // This is sample data.
 const data = {

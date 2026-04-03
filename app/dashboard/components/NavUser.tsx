@@ -28,11 +28,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Profile } from "@/generated/prisma/client";
 import { useState } from "react";
 import LogoutAlertDialog from "./LogoutAlertDialog";
 import NavUserSkeleton from "./NavUserSkeleton";
 import NavUserError from "./NavUserError";
+import { Profile } from "@/util/interfaces";
 
 interface Props {
   user: Profile | undefined;
