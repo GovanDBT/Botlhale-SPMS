@@ -16,30 +16,65 @@ datasource db {
 enum Role {
   SUPERADMIN
   ADMIN
+  STAFF
   SCHOOLADMIN
   FACULTY
   STUDENT
 }
 
+enum Permission {
+  // user management
+  USER_VIEW
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+
+  // school management
+  SCHOOL_VIEW
+  SCHOOL_CREATE
+  SCHOOL_UPDATE
+  SCHOOL_DELETE
+
+  // role management
+  ROLE_VIEW
+  ROLE_ASSIGN
+
+  // system settings
+  // reports
+}
+
 model Profile {
-  id            String    @id @db.Uuid
-  userId        String    @unique
-  firstname     String
-  lastname      String
-  email         String    @unique
-  phone         String    @unique
-  active        Boolean   @default(true)
-  role          Role      @default(STUDENT)
-  dateCreated   DateTime  @default(now())
-  createdBy     String?   @db.Uuid
-  createdByUser Profile?  @relation("CreatedByUser", fields: [createdBy], references: [id])
-  dateUpdated   DateTime? @updatedAt
-  updatedBy     String?   @db.Uuid
-  updatedByUser Profile?  @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+  id                  String           @id @db.Uuid
+  userId              String           @unique
+  firstname           String
+  lastname            String
+  email               String           @unique
+  phone               String           @unique
+  isActive            Boolean          @default(true)
+  role                Role             @default(STUDENT)
+  dateCreated         DateTime         @default(now())
+  createdBy           String?          @db.Uuid
+  createdByUser       Profile?         @relation("CreatedByUser", fields: [createdBy], references: [id])
+  dateUpdated         DateTime?        @updatedAt
+  updatedBy           String?          @db.Uuid
+  updatedByUser       Profile?         @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+  permissionOverrides UserPermission[]
 
   // Self-referencing back-relations (required by Prisma)
   createdUsers Profile[] @relation("CreatedByUser")
   UpdatedUsers Profile[] @relation("UpdatedByUser")
 
   @@map("profiles")
+}
+
+// per-user permission overrides (grants or deny on top of role defaults)
+model UserPermission {
+  id         String     @id @default(cuid())
+  userId     String     @db.Uuid
+  permission Permission
+  granted    Boolean // true=explicitly granted, false=explicitly denied
+  user       Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permission])
+  @@map("user_permissions")
 }
