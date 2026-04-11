@@ -4,13 +4,23 @@
  */
 
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
-export default function handleUnexpectedError(error: unknown): NextResponse {
+export default function handleUnexpectedError(
+  error: unknown,
+  context?: Record<string, unknown>
+): NextResponse {
+  // logs error to Sentry
+  Sentry.captureException(error, {
+    extra: context,
+  });
+
   // convert error to string
   const error_message =
     error instanceof Error
       ? error.message
       : "Unexpected server error occurred!";
+
   // log error to server & client
   return NextResponse.json(
     { success: false, error: error_message },

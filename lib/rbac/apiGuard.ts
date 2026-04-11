@@ -7,16 +7,46 @@ import { createClient } from "@/services/supabase/server";
 import { NextResponse } from "next/server";
 import prisma from "../prisma";
 import { hasPermission } from "./permissionResolver";
+import * as Sentry from "@sentry/nextjs";
 
-export async function requirePermission(permission: Permission) {
+export async function requirePermission(
+  permission: Permission,
+  endpoint?: string,
+  endpointMethod?: string
+) {
+  // init Supabase client
   const supabase = await createClient();
 
+  // verify user session via Supabase Auth
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
 
+  // if sessions fails
   if (error || !user) {
+    // log warning to Sentry
+    Sentry.logger.warn("Unauthenticated request attempt", {
+      userId: user?.id,
+      email: user?.email,
+      userRole: user?.user_metadata?.user_role,
+      endpoint: endpoint,
+      method: endpointMethod,
+      permission: permission,
+    });
+    // log breadcrumb to Sentry if error occurs
+    Sentry.addBreadcrumb({
+      category: "auth",
+      message: "Unauthenticated request attempt to " + endpoint,
+      level: "warning",
+      timestamp: Date.now(),
+      data: {
+        supabaseCode: error?.code,
+        supabaseMessage: error?.message,
+        supabaseStatus: error?.status,
+      },
+    });
+    // log to client
     return {
       error: NextResponse.json(
         { success: false, error: "Unauthorized" },
@@ -31,6 +61,21 @@ export async function requirePermission(permission: Permission) {
   });
 
   if (!profile || !profile.isActive) {
+    // log error to Sentry
+    Sentry.captureException(
+      new Error("Authenticated user has no profile record or is Inactive"),
+      {
+        tags: { section: "Authentication" },
+        level: "fatal",
+        extra: {
+          userId: user.id,
+          email: user.email,
+          userCreatedAt: user.created_at,
+          userRole: user.user_metadata.user_role,
+        },
+      }
+    );
+    // log to client
     return {
       error: NextResponse.json(
         { success: false, error: "Account not found or disabled" },
@@ -46,6 +91,27 @@ export async function requirePermission(permission: Permission) {
   );
 
   if (!allowed) {
+    // log warning to Sentry
+    Sentry.logger.warn("Unsatisfied permission attempt", {
+      userId: user?.id,
+      email: user?.email,
+      userRole: user?.user_metadata?.user_role,
+      endpoint: endpoint,
+      method: endpointMethod,
+      permission: permission,
+    });
+    // log breadcrumb to Sentry if error occurs
+    Sentry.addBreadcrumb({
+      category: "Permissions",
+      message: "Unsatisfied permission attempt",
+      level: "warning",
+      timestamp: Date.now(),
+      data: {
+        userId: profile.id,
+        userRole: profile.role,
+        permission: permission,
+      },
+    });
     return {
       error: NextResponse.json(
         { success: false, error: "Forbidden" },
@@ -53,6 +119,18 @@ export async function requirePermission(permission: Permission) {
       ),
     };
   }
+
+  Sentry.addBreadcrumb({
+    category: "Permission",
+    message: "Permission satisfied",
+    level: "info",
+    timestamp: Date.now(),
+    data: {
+      userId: profile.id,
+      userRole: profile.role,
+      permission: permission,
+    },
+  });
 
   return { user, profile };
 }
