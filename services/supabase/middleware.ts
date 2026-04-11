@@ -8,6 +8,7 @@
  */
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -44,6 +45,17 @@ export default async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // attach user to every API error in Sentry
+  if (user) {
+    Sentry.setUser({
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata.user_role,
+    });
+  } else {
+    Sentry.setUser(null);
+  }
 
   const isAuthenticated = !!user;
   const pathname = request.nextUrl.pathname;
