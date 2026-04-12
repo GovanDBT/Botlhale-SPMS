@@ -43,6 +43,12 @@ enum Permission {
   // reports
 }
 
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
 model Profile {
   id                  String           @id @db.Uuid
   userId              String           @unique
@@ -50,7 +56,6 @@ model Profile {
   lastname            String
   email               String           @unique
   phone               String           @unique
-  isActive            Boolean          @default(true)
   role                Role             @default(STUDENT)
   dateCreated         DateTime         @default(now())
   createdBy           String?          @db.Uuid
@@ -58,6 +63,12 @@ model Profile {
   dateUpdated         DateTime?        @updatedAt
   updatedBy           String?          @db.Uuid
   updatedByUser       Profile?         @relation("UpdatedByUser", fields: [updatedBy], references: [id])
+  isActive            Boolean          @default(true)
+  accountStatus       AccountStatus    @default(ACTIVE)
+  statusReason        String?
+  suspendedUntil      DateTime?
+  statusUpdatedAt     DateTime?
+  statusUpdatedBy     String?          @db.Uuid
   permissionOverrides UserPermission[]
 
   // Self-referencing back-relations (required by Prisma)
