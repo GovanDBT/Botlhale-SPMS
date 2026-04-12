@@ -42,22 +42,20 @@ export default async function updateSession(request: NextRequest) {
   });
 
   // call supabase to confirm is token is valid
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getClaims();
 
   // attach user to every API error in Sentry
-  if (user) {
+  if (data) {
     Sentry.setUser({
-      id: user.id,
-      email: user.email,
-      role: user.user_metadata.user_role,
+      id: data.claims.sub,
+      email: data.claims.email,
+      role: data.claims.user_role,
     });
   } else {
     Sentry.setUser(null);
   }
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!data;
   const pathname = request.nextUrl.pathname;
 
   // Unauthenticated users trying to access protected routes -> /auth/login

@@ -7,6 +7,7 @@ import { CACHE_KEY_PROFILE } from "@/util/cache";
 import { PROFILE_ENDPOINT } from "@/util/endpoints";
 import { Profile } from "@/util/interfaces";
 import { useQuery } from "@tanstack/react-query";
+
 import axios from "axios";
 
 // retrieves the current users profile

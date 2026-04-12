@@ -2,21 +2,23 @@
  * @file app/dashboard/components/Dashboard.tsx
  * @description dashboard component
  */
-
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ReactNode } from "react";
 import { AppSidebar } from "./AppSidebar";
 import SidebarTriggerWithTooltip from "./SidebarTriggerWithTooltip";
 
-const Dashboard = () => {
+interface Props {
+  children: ReactNode;
+}
+
+const Dashboard = ({ children }: Props) => {
   return (
     <SidebarProvider>
       {/* dashboard aside */}
@@ -31,30 +33,19 @@ const Dashboard = () => {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
+            {/* Breadcrumbs */}
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Build Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <Separator className="mb-7" />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div>
+        <Separator />
+        {/* Content */}
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
