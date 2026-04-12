@@ -1,12 +1,21 @@
-import SignoutButton from "./components/SignoutButton";
+/**
+ * @file app/dashboard/page.tsx
+ * @description dashboard inset area
+ */
+import type { Metadata } from "next";
+import DashboardInset from "./components/DashboardInset";
 
-const Dashboard = () => {
+export const metadata: Metadata = {
+  title: "Dashboard | Botlhale EMS",
+  description: "",
+};
+
+const DashboardLandingPage = () => {
   return (
-    <div>
-      This is the dashboard
-      <SignoutButton />
-    </div>
+    <main className="p-5">
+      <DashboardInset />
+    </main>
   );
 };
 
-export default Dashboard;
+export default DashboardLandingPage;

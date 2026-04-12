@@ -10,5 +10,5 @@ interface Props {
 }
 
 export default async function DashboardLayout({ children }: Props) {
-  return <Dashboard></Dashboard>;
+  return <Dashboard>{children}</Dashboard>;
 }
